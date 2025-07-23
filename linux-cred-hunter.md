@@ -1,71 +1,53 @@
-# 🔑 linux-cred-hunter
+# 🔐 linux-cred-hunter
 
-## ✅ `find_credentials.sh`
+A simple bash script to automatically locate files on a Linux system that may contain **usernames**, **passwords**, **SSH keys**, or other **sensitive credentials**.
 
-```
-#!/bin/bash
+Useful for:
 
-# Color definitions
-GREEN='\033[1;32m'
-RED='\033[1;31m'
-NC='\033[0m' # No Color
+- ✅ Post-exploitation during red teaming or penetration testing  
+- 🧠 CTF (Capture The Flag) and OSCP-style challenges  
+- 🛡️ Internal system audits and security hardening  
 
-echo -e "${GREEN}[*] Searching for common credential files on the system...${NC}"
-echo
+---
 
-# List of potential credential file paths (some use wildcards)
-files=(
-  "/etc/passwd"
-  "/etc/shadow"
-  "/etc/group"
-  "/etc/gshadow"
-  "/var/log/auth.log"
-  "/etc/mysql/my.cnf"
-  "/var/www/html/*config*.php"
-  "/home/*/.bash_history"
-  "/home/*/.ssh/id_rsa"
-  "/home/*/.ssh/known_hosts"
-  "/root/.bash_history"
-  "/home/*/.netrc"
-  "/home/*/.git-credentials"
-  "/home/*/.aws/credentials"
-  "/home/*/.config/**"
-  "/etc/openvpn/*.conf"
-  "/etc/samba/smb.conf"
-  "/var/www/html/wp-config.php"
-  "/opt/**"
-)
+## 📂 What It Does
 
-# Search and display results
-for path in "${files[@]}"; do
-  matches=$(find $path 2>/dev/null)
-  if [[ ! -z "$matches" ]]; then
-    echo -e "${GREEN}[+] Found:${NC} $path"
-    echo "$matches" | sed 's/^/    - /'
-    echo
-  else
-    echo -e "${RED}[-] Not Found:${NC} $path"
-  fi
-done
+The script searches for common credential-containing files such as:
 
-echo -e "${GREEN}[*] Done.${NC}"
+- `/etc/shadow`, `/etc/passwd`, `/etc/mysql/my.cnf`
+- User bash histories (`.bash_history`)
+- SSH private keys (`~/.ssh/id_rsa`)
+- Application config files (`wp-config.php`, `*.conf`)
+- Saved credentials (`.aws/credentials`, `.git-credentials`)
 
-```
+It will output what it finds and where, helping you quickly identify weak spots or sensitive data.
 
-## 🛠️ How to Use:
-- Save the script:
-```
-nano find_credentials.sh
-```
+---
 
-> (Paste the script and save with Ctrl+O, Enter, Ctrl+X)
+## 🛠️ How to Use
 
-- Make it executable:
-```
+```bash
+git clone https://github.com/your-username/linux-cred-hunter.git
+cd linux-cred-hunter
 chmod +x find_credentials.sh
+./find_credentials.sh
+
+```
+> 📌 Note: Root access may be required to read certain protected files like `/etc/shadow `or `/root/.bash_history`.
+
+## 📁 Example Output
+```
+[+] Found: /etc/shadow
+    - /etc/shadow
+
+[-] Not Found: /home/user/.git-credentials
+
+[+] Found: /home/user/.ssh/id_rsa
+    - /home/user/.ssh/id_rsa
 ```
 
-- Run the script:
-```
-./find_credentials.sh
-```
+## 📚 References & Inspiration
+
+- 🔗 [GTFOBins](https://gtfobins.github.io/)
+
+-  🔗 [PayloadAllTheThings – Credential Dumping](https://github.com/swisskyrepo/PayloadsAllTheThings)
